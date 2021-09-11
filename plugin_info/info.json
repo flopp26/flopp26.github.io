@@ -1,0 +1,21 @@
+{
+	"id" : "instantt",
+	"name" : "Instant T",
+	"description" : "Plugin permettant de faire un snapshot de l'état de ses équipements",
+	"licence" : "AGPL",
+	"author" : "Flop",
+	"require" : "4.0.20",
+	"version" : "0.0.1",
+	"category" : "organization",
+	"hasDependency" : false,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 0,
+	"changelog" : "",
+	"documentation" : "",
+	"link" : {
+		"forum":"https://community.jeedom.com/tags/plugin-magictrigger",
+		"video" : ""
+	},
+	"language" : ["fr_FR", "en_US"],
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","v4"]
+}
