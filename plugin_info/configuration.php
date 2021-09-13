@@ -27,6 +27,13 @@ if (!isConnect()) {
   <fieldset>
 
       <div class="form-group">
+          <label class="col-md-4 control-label">{{Afficher le débug pour les commandes non trouvées}} </label>
+          <div class="col-sm-1">
+              <input type="checkbox" class="configKey form-control" data-l1key="show-debug-cmds"/>
+          </div>
+      </div>
+
+      <div class="form-group">
           <label class="col-md-4 control-label">{{Supprimer l'ensemble des commandes actions trouvées}}
               <sup>
                   <i class="fas fa-question-circle floatright"></i>

@@ -190,7 +190,7 @@ class instanttHelper extends eqLogic
         return false;
     }
 
-    private function getElementComparaison($cmd)
+    public function getElementComparaison($cmd)
     {
         $name = strtolower($cmd->getName());
         $eqType = $cmd->getEqType();

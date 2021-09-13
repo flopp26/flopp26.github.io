@@ -53,6 +53,25 @@ class instantt extends eqLogic
     // Fonction exécutée automatiquement après la mise à jour de l'équipement
     public function postUpdate()
     {
+        // Create the table where the triggers are stored
+        $sql = 'CREATE TABLE IF NOT EXISTS `instantt_state` ('
+            . '`added` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,'
+            . '`instantt_id` INT(11) NOT NULL,'
+            . '`instantt_state_eqlogic` VARCHAR(50) DEFAULT NULL,'
+            . '`instantt_state_id` VARCHAR(50) NOT NULL,'
+            . '`instantt_state_value` VARCHAR(50) NOT NULL'
+            . ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+        DB::Prepare($sql, array(), DB::FETCH_TYPE_ROW);
+
+        // Create the table where the triggers are stored
+        $sql = 'CREATE TABLE IF NOT EXISTS `instantt_cmds` ('
+            . '`instantt_state_id` INT(11) NOT NULL,'
+            . '`instantt_cmd_id` INT(11) NOT NULL,'
+            . '`instantt_cmd_name` VARCHAR(50) NOT NULL,'
+            . 'UNIQUE(instantt_state_id, instantt_cmd_id)'
+            . ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+        DB::Prepare($sql, array(), DB::FETCH_TYPE_ROW);
+
         $this->createEquipements();
     }
 
@@ -133,7 +152,16 @@ class instantt extends eqLogic
 
                     $actions = $instantHelper->getCommandsActions($cmd);
 
-                    log::add('instantt', (count($actions) == 0) ? 'error' : 'debug', sprintf('%s %s - %s action(s) trouvée(s) pour la commande %s%s', $this->getHumanName(), $triggerHumanReadable, count($actions), $cmd->getHumanName(), (count($actions) > 0) ? null : ' - [logicalId] = ' . $cmd->getLogicalId()));
+                    log::add('instantt', (count($actions) == 0) ? 'error' : 'debug', sprintf('%s %s - %s action(s) trouvée(s) pour la commande %s', $this->getHumanName(), $triggerHumanReadable, count($actions), $cmd->getHumanName()));
+                    if(count($actions) == 0){
+                        log::add('instantt','warning', sprintf('%s %s - StatToSearch: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($instantHelper->getElementComparaison($cmd))));
+                        log::add('instantt','warning', sprintf('%s %s - Type: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getType())));
+                        log::add('instantt','warning', sprintf('%s %s - SubType: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getSubType())));
+                        log::add('instantt','warning', sprintf('%s %s - EqLogic_id: %s', $this->getHumanName(), $triggerHumanReadable, $cmd->getEqLogic_id()));
+                        log::add('instantt','warning', sprintf('%s %s - LogicalId: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getLogicalId())));
+                        log::add('instantt','warning', sprintf('%s %s - eqType: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getEqType())));
+                        log::add('instantt','warning', sprintf('%s %s - Generic_type: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getGeneric_type())));
+                    }
 
                     if (is_array($actions) && count($actions) > 0) {
                         $instanttDb->insertCommand($cmdId, $actions);
