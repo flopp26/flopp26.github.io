@@ -48,10 +48,6 @@ class instantt extends eqLogic
     public function preUpdate()
     {
         $this->checkEquipement();
-
-
-        //DB::Prepare('DROP TABLE IF EXISTS `instanttDB`;', array(), DB::FETCH_TYPE_ROW);
-        //DB::Prepare('DROP TABLE IF EXISTS `instantt_cmds`;', array(), DB::FETCH_TYPE_ROW);
     }
 
     // Fonction exécutée automatiquement après la mise à jour de l'équipement
@@ -133,12 +129,18 @@ class instantt extends eqLogic
                     }
                 }
 
-                $actions = $instantHelper->getCommandsActions($cmd);
+                if (is_object($cmd)) {
 
-                log::add('instantt', (count($actions) == 0) ? 'error' : 'debug', sprintf('%s %s - %s action(s) trouvée(s) pour la commande %s%s', $this->getHumanName(), $triggerHumanReadable, count($actions), $cmd->getHumanName(), (count($actions) > 0) ? null : ' - [logicalId] = ' . $cmd->getLogicalId()));
+                    $actions = $instantHelper->getCommandsActions($cmd);
 
-                if (is_array($actions) && count($actions) > 0) {
-                    $instanttDb->insertCommand($cmdId, $actions);
+                    log::add('instantt', (count($actions) == 0) ? 'error' : 'debug', sprintf('%s %s - %s action(s) trouvée(s) pour la commande %s%s', $this->getHumanName(), $triggerHumanReadable, count($actions), $cmd->getHumanName(), (count($actions) > 0) ? null : ' - [logicalId] = ' . $cmd->getLogicalId()));
+
+                    if (is_array($actions) && count($actions) > 0) {
+                        $instanttDb->insertCommand($cmdId, $actions);
+                    }
+                }else{
+                    log::add('instantt', 'warning', sprintf('%s cmd is not object - %s', $this->getHumanName(), $triggerHumanReadable));
+
                 }
             }
         }

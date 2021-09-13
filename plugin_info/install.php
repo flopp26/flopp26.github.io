@@ -36,12 +36,10 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
       $sql = 'CREATE TABLE IF NOT EXISTS `instantt_cmds` ('
           . '`instantt_state_id` INT(11) NOT NULL,'
           . '`instantt_cmd_id` INT(11) NOT NULL,'
-          . '`instantt_cmd_name` VARCHAR(50) NOT NULL'
+          . '`instantt_cmd_name` VARCHAR(50) NOT NULL,'
           . 'UNIQUE(instantt_state_id, instantt_cmd_id)'
           . ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
       DB::Prepare($sql, array(), DB::FETCH_TYPE_ROW);
-
-
   }
 
 // Fonction exécutée automatiquement après la mise à jour du plugin
@@ -53,7 +51,6 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 // Fonction exécutée automatiquement après la suppression du plugin
   function instantt_remove()
   {
-
       DB::Prepare('DROP TABLE IF EXISTS `instantt_cmds`;', array(), DB::FETCH_TYPE_ROW);
       DB::Prepare('DROP TABLE IF EXISTS `instantt_state`;', array(), DB::FETCH_TYPE_ROW);
   }
