@@ -118,7 +118,6 @@ class instanttHelper extends eqLogic
         } else if ($eqType == 'alarm' && $stateName == 'mode') {
             $valueToFind = strtolower($stateValue);
         } else if ($eqType == 'thermostat') {
-
             if ($elementComparaison == 'lock_state') {
                 $valueToFind = ($stateValue == 0) ? 'unlock' : 'lock';
             } else if (in_array($elementComparaison, ['mode', 'order'])) {
@@ -127,7 +126,6 @@ class instanttHelper extends eqLogic
                     $valueToFind = 'off';
                 }
             }
-
         } else if ($genericType == 'mode_state') {
             $valueToFind = strtolower($stateValue);
         } else if ($eqType == 'squeezeboxcontrol') {
@@ -418,6 +416,22 @@ class instanttHelper extends eqLogic
         return [];
     }
 
+    public function getFor_GoogleCast($stateToSearch, $cmd): array
+    {
+        if (strtolower($cmd->getLogicalId()) == 'volume_level') {
+            return ['volume_set'];
+        }
+
+        if (strtolower($cmd->getLogicalId()) == 'volume_muted') {
+            return ['mute_on', 'mute_off'];
+        }
+
+        //$cmds = cmd::byEqLogicId($cmd->getEqLogic_id(), 'action');
+        //dump($cmds);
+
+        return [];
+    }
+
     public function getCommandsInfoFromEqLogic($idEqLogic)
     {
         $cmdEqLogic = eqLogic::byId($idEqLogic);
@@ -436,7 +450,8 @@ class instanttHelper extends eqLogic
             'groupe' => ['last', 'statuson', 'statusoff'],
             'thermostat' => ['temperature', 'temperature_outdoor', 'actif'],
             'chauffeEau' => ['consigne', 'powertime', 'nextstart', 'nextstop', 'tempactuel', 'bacteryprotect', 'etat', 'state'],
-            'deconz' => ['01-1000.state::buttonevent']
+            'deconz' => ['01-1000.state::buttonevent'],
+            'googleCast' => ['nowplaying', 'is_busy', 'castversion', 'volume_muted']
         ));
 
         $uniteNotAllowed = instanttFunction::mergeArrayKey(array(
@@ -446,7 +461,6 @@ class instanttHelper extends eqLogic
         $genericTypeNotAllowed = instanttFunction::mergeArrayKey(array(
             'deconz' => ['opening', 'temperature', 'generic_infooo']
         ));
-
 
         $cmdAllowed = array();
         foreach ($cmds as $cmd) {
@@ -488,6 +502,8 @@ class instanttHelper extends eqLogic
             $tabLogicalIdToSearch = $this->getFor_Thermostat($stateToSearch, $cmd);
         } else if ($eqType == 'chauffeeau') {
             $tabLogicalIdToSearch = $this->getFor_ChauffeEau($stateToSearch, $cmd);
+        } else if ($eqType == 'googlecast'){
+            $tabLogicalIdToSearch = $this->getFor_GoogleCast($stateToSearch, $cmd);
         }
 
         if (count($tabLogicalIdToSearch) == 0) {

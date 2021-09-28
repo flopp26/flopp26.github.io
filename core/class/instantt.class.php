@@ -30,6 +30,12 @@ function dump($debug)
 
 class instantt extends eqLogic
 {
+    /* Fonction exécutée automatiquement toutes les minutes par Jeedom*/
+    public static function cron()
+    {
+        log::add('instantt', 'warning', 'lancement du cron minute [future simulation présence]');
+    }
+
     /*     * *********************Méthodes d'instance************************* */
 
     // Fonction exécutée automatiquement avant la création de l'équipement
@@ -111,8 +117,8 @@ class instantt extends eqLogic
         $triggers = $this->getConfiguration('triggers');
         foreach ($triggers as $trigger) {
 
-            if($triggerHumanReadable = jeedom::toHumanReadable($trigger)){
-                if(isset($triggerHumanReadable['cmd'])){
+            if ($triggerHumanReadable = jeedom::toHumanReadable($trigger)) {
+                if (isset($triggerHumanReadable['cmd'])) {
                     $triggerHumanReadable = $triggerHumanReadable['cmd'];
                 }
             }
@@ -140,9 +146,9 @@ class instantt extends eqLogic
 
             foreach ($cmds as $cmd) {
                 $cmdId = $cmd->getId();
-                if($cmd->getEqType() == 'groupe'){
+                if ($cmd->getEqType() == 'groupe') {
                     $cmdStateConfig = $cmd->getConfiguration();
-                    if(is_array($cmdStateConfig)){
+                    if (is_array($cmdStateConfig)) {
                         $cmdId = str_replace('#', '', $cmdStateConfig['state']);
                         $cmd = cmd::byId($cmdId);
                     }
@@ -153,22 +159,22 @@ class instantt extends eqLogic
                     $actions = $instantHelper->getCommandsActions($cmd);
 
                     log::add('instantt', (count($actions) == 0) ? 'error' : 'debug', sprintf('%s %s - %s action(s) trouvée(s) pour la commande %s', $this->getHumanName(), $triggerHumanReadable, count($actions), $cmd->getHumanName()));
-                    if(count($actions) == 0){
-                        log::add('instantt','warning', sprintf('%s %s - StatToSearch: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($instantHelper->getElementComparaison($cmd))));
-                        log::add('instantt','warning', sprintf('%s %s - Type: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getType())));
-                        log::add('instantt','warning', sprintf('%s %s - SubType: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getSubType())));
-                        log::add('instantt','warning', sprintf('%s %s - EqLogic_id: %s', $this->getHumanName(), $triggerHumanReadable, $cmd->getEqLogic_id()));
-                        log::add('instantt','warning', sprintf('%s %s - LogicalId: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getLogicalId())));
-                        log::add('instantt','warning', sprintf('%s %s - eqType: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getEqType())));
-                        log::add('instantt','warning', sprintf('%s %s - Generic_type: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getGeneric_type())));
+                    if (count($actions) == 0) {
+                        log::add('instantt', 'warning', sprintf('%s %s - StatToSearch: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($instantHelper->getElementComparaison($cmd))));
+                        log::add('instantt', 'warning', sprintf('%s %s - Type: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getType())));
+                        log::add('instantt', 'warning', sprintf('%s %s - SubType: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getSubType())));
+                        log::add('instantt', 'warning', sprintf('%s %s - EqLogic_id: %s', $this->getHumanName(), $triggerHumanReadable, $cmd->getEqLogic_id()));
+                        log::add('instantt', 'warning', sprintf('%s %s - LogicalId: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getLogicalId())));
+                        log::add('instantt', 'warning', sprintf('%s %s - eqType: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getEqType())));
+                        log::add('instantt', 'warning', sprintf('%s %s - Generic_type: %s', $this->getHumanName(), $triggerHumanReadable, strtolower($cmd->getGeneric_type())));
                     }
 
                     if (is_array($actions) && count($actions) > 0) {
                         $instanttDb->insertCommand($cmdId, $actions);
                     }
-                }else{
-                    log::add('instantt', 'warning', sprintf('%s cmd is not object - %s', $this->getHumanName(), $triggerHumanReadable));
 
+                } else {
+                    log::add('instantt', 'warning', sprintf('%s cmd is not object - %s', $this->getHumanName(), $triggerHumanReadable));
                 }
             }
         }
@@ -214,8 +220,8 @@ class instantt extends eqLogic
         $triggers = $this->getConfiguration('triggers');
         foreach ($triggers as $trigger) {
 
-            if($triggerHumanReadable = jeedom::toHumanReadable($trigger)){
-                if(isset($triggerHumanReadable['cmd'])){
+            if ($triggerHumanReadable = jeedom::toHumanReadable($trigger)) {
+                if (isset($triggerHumanReadable['cmd'])) {
                     $triggerHumanReadable = $triggerHumanReadable['cmd'];
                 }
             }
@@ -250,9 +256,9 @@ class instantt extends eqLogic
             try {
                 foreach ($cmds as $cmd) {
 
-                    if($cmd->getEqType() == 'groupe'){
+                    if ($cmd->getEqType() == 'groupe') {
                         $cmdStateConfig = $cmd->getConfiguration();
-                        if(is_array($cmdStateConfig)){
+                        if (is_array($cmdStateConfig)) {
                             $idCmdStateFromGroupe = str_replace('#', '', $cmdStateConfig['state']);
                             $cmd = cmd::byId($idCmdStateFromGroupe);
                         }
@@ -287,6 +293,7 @@ class instantt extends eqLogic
 
         foreach ($instantState as $state) {
 
+
             $cmdStateId = $state['instantt_state_id'];
             $cmdStateEqLogicId = $state['instantt_state_eqlogic'];
 
@@ -296,7 +303,9 @@ class instantt extends eqLogic
 
                 // on va récuper la commande d'état ou plusieurs si eqlogics
                 $cmdsState = [];
-                $cmdsState[] = ['state_value' => $state['instantt_state_value'], 'cmd' => cmd::byId($cmdStateId)];
+                $cmd = cmd::byId($cmdStateId);
+                $cmdsState[] = ['state_value' => $state['instantt_state_value'], 'cmd' => $cmd];
+
                 if ($isEqLogic) {
 
                     if (count($cmdsState) == 0) {
@@ -311,73 +320,84 @@ class instantt extends eqLogic
 
                     foreach ($cmdsState as $data) {
 
-                        $cmdState = $data['cmd'];
-                        $stateValue = $data['state_value'];
-                        $cmds = $instanttDb->getCmdsFromStateId($cmdState->getId());
+                        try {
 
-
-                        $cmdToRun = $instanttHelper->guessCommandeForRetrieveState($cmdState, $cmds, $stateValue);
-                        if ($cmdToRun) {
-
-                            $type = strtolower($cmdToRun->getType());
-                            $eqType = strtolower($cmdToRun->getEqType());
-                            $subType = strtolower($cmdToRun->getSubType());
-                            $genericType = strtolower($cmdToRun->getGeneric_type());
-                            $subTypeCmdState = strtolower($cmdState->getSubType());
-
-                            $error = true;
-                            $complementLog= null;
-
-                            if ($subTypeCmdState == 'binary') {
-                                $error = $cmdToRun->execCmd();
-
-                            } else if (in_array($subType, array('slider', 'color'))) {
-
-                                $options = array($subType => $stateValue);
-                                $error = $cmdToRun->execCmd($options);
-                                $complementLog = sprintf(' avec options eeraee: %s', json_encode($options));
-
-                            } else if ($subType == 'other' && $eqType == 'harmonyhub') {
-                                $error = $cmdToRun->execCmd();
-
-                            } else if ($eqType == 'thermostat') {
-
-                                if (count($cmdToRun->getConfiguration) == 0) {
-                                    $error = $cmdToRun->execCmd();
-                                }
-
-                            } else if ($eqType == 'chauffeeau') {
-                                    $error = $cmdToRun->execCmd();
-                            } else if ($eqType == 'squeezeboxcontrol') {
-
-                                if (count($cmdToRun->getConfiguration) == 0) {
-                                    $error = $cmdToRun->execCmd();
-                                }
-
-                            } else if ($subType == 'other' && $eqType == 'alarm') {
-                                $error = $cmdToRun->execCmd();
-
-                            } else if (count($cmds) == 1 && $eqType == 'virtual' && $type == 'info') {
-                                $error = $cmdToRun->event($stateValue);
-                                $complementLog = sprintf('[Event] => %s', $stateValue);
-
-                            } else if ($genericType == 'mode_set_state') {
-                                $error = $cmdToRun->execCmd();
-                            } else {
-
-                                log::add('instantt', 'debug', sprintf('loadInstantT() - Need help to know how to run commande: %s [%s]', $cmdToRun->getEqType(), $cmdToRun->getName()));
-                                log::add('instantt', 'debug', sprintf('loadInstantT() - EqType: %s', $eqType));
-                                log::add('instantt', 'debug', sprintf('loadInstantT() - SubType: %s', $subType));
-                                log::add('instantt', 'error', sprintf('loadInstantT() - Need help to know how to run commande: %s [%s]', $cmdToRun->getEqType(), $cmdToRun->getName()));
+                            $cmdState = $data['cmd'];
+                            if (!is_object($cmd) || is_null($cmdState)) {
+                                continue;
                             }
 
-                            if (!$error) {
-                                log::add('instantt', 'debug', sprintf('%s - Execution de la commande: %s%s', $this->getHumanName(), $cmdToRun->getHumanName(), isset($complementLog) ? $complementLog : null));
+                            $stateValue = $data['state_value'];
+                            $cmds = $instanttDb->getCmdsFromStateId($cmdState->getId());
+
+                            $cmdToRun = $instanttHelper->guessCommandeForRetrieveState($cmdState, $cmds, $stateValue);
+                            if ($cmdToRun) {
+
+                                $type = strtolower($cmdToRun->getType());
+                                $eqType = strtolower($cmdToRun->getEqType());
+                                $subType = strtolower($cmdToRun->getSubType());
+                                $genericType = strtolower($cmdToRun->getGeneric_type());
+                                $subTypeCmdState = strtolower($cmdState->getSubType());
+
+                                $error = true;
+                                $complementLog = null;
+
+                                if ($subTypeCmdState == 'binary') {
+                                    $error = $cmdToRun->execCmd();
+
+                                } else if (in_array($subType, array('slider', 'color'))) {
+
+                                    $options = array($subType => $stateValue);
+                                    $error = $cmdToRun->execCmd($options);
+                                    $complementLog = sprintf(' avec options eeraee: %s', json_encode($options));
+
+                                } else if ($subType == 'other' && $eqType == 'harmonyhub') {
+                                    $error = $cmdToRun->execCmd();
+
+                                } else if ($eqType == 'thermostat') {
+
+                                    if (count($cmdToRun->getConfiguration) == 0) {
+                                        $error = $cmdToRun->execCmd();
+                                    }
+
+                                } else if ($eqType == 'chauffeeau') {
+                                    $error = $cmdToRun->execCmd();
+                                } else if ($eqType == 'squeezeboxcontrol') {
+
+                                    if (count($cmdToRun->getConfiguration) == 0) {
+                                        $error = $cmdToRun->execCmd();
+                                    }
+
+                                } else if ($subType == 'other' && $eqType == 'alarm') {
+                                    $error = $cmdToRun->execCmd();
+
+                                } else if (count($cmds) == 1 && $eqType == 'virtual' && $type == 'info') {
+                                    $error = $cmdToRun->event($stateValue);
+                                    $complementLog = sprintf('[Event] => %s', $stateValue);
+
+                                } else if ($genericType == 'mode_set_state') {
+                                    $error = $cmdToRun->execCmd();
+                                } else {
+
+                                    log::add('instantt', 'debug', sprintf('loadInstantT() - Need help to know how to run commande: %s [%s]', $cmdToRun->getEqType(), $cmdToRun->getName()));
+                                    log::add('instantt', 'debug', sprintf('loadInstantT() - EqType: %s', $eqType));
+                                    log::add('instantt', 'debug', sprintf('loadInstantT() - SubType: %s', $subType));
+                                    log::add('instantt', 'error', sprintf('loadInstantT() - Need help to know how to run commande: %s [%s]', $cmdToRun->getEqType(), $cmdToRun->getName()));
+                                }
+
+                                if (!$error) {
+                                    log::add('instantt', 'debug', sprintf('%s - Execution de la commande: %s%s', $this->getHumanName(), $cmdToRun->getHumanName(), isset($complementLog) ? $complementLog : null));
+                                }
                             }
+
+                        } catch (Exception $e) {
+                            log::add('instantt', 'error', '(string)$e');
                         }
                     }
                 }
             }
+
+
         }
     }
 
@@ -438,8 +458,5 @@ class instanttCmd extends cmd
         }
     }
 
-
     /*     * **********************Getteur Setteur*************************** */
 }
-
-
